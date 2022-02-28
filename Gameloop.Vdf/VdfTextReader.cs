@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 
 namespace Gameloop.Vdf
 {
@@ -10,7 +9,7 @@ namespace Gameloop.Vdf
 
         private readonly TextReader _reader;
         private readonly char[] _charBuffer;
-        private readonly StringBuilder _tokenBuffer;
+        private readonly CharBuffer _tokenBuffer;
         private int _charPos, _charsLen, _tokenSize;
         private bool _isQuoted, _isComment;
 
@@ -23,7 +22,7 @@ namespace Gameloop.Vdf
 
             _reader = reader;
             _charBuffer = new char[DefaultBufferSize];
-            _tokenBuffer = new StringBuilder();
+            _tokenBuffer = new CharBuffer();
             _charPos = _charsLen = 0;
             _tokenSize = 0;
             _isQuoted = false;
