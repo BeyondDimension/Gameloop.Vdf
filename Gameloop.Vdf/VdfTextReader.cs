@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace Gameloop.Vdf
 {
@@ -8,7 +9,8 @@ namespace Gameloop.Vdf
         private const int DefaultBufferSize = 1024;
 
         private readonly TextReader _reader;
-        private readonly char[] _charBuffer, _tokenBuffer;
+        private readonly char[] _charBuffer;
+        private readonly StringBuilder _tokenBuffer;
         private int _charPos, _charsLen, _tokenSize;
         private bool _isQuoted, _isComment;
 
@@ -21,7 +23,7 @@ namespace Gameloop.Vdf
 
             _reader = reader;
             _charBuffer = new char[DefaultBufferSize];
-            _tokenBuffer = new char[MaximumTokenSize];
+            _tokenBuffer = new StringBuilder();
             _charPos = _charsLen = 0;
             _tokenSize = 0;
             _isQuoted = false;
@@ -50,7 +52,7 @@ namespace Gameloop.Vdf
                     if (curChar == '\r' || curChar == '\n')
                     {
                         _isComment = false;
-                        Value = new string(_tokenBuffer, 0, _tokenSize);
+                        Value = _tokenBuffer.ToString(0, _tokenSize);
                         CurrentState = State.Comment;
                         return true;
                     }
@@ -85,7 +87,7 @@ namespace Gameloop.Vdf
 
                 if (curChar == VdfStructure.Quote || (!_isQuoted && Char.IsWhiteSpace(curChar)))
                 {
-                    Value = new string(_tokenBuffer, 0, _tokenSize);
+                    Value = _tokenBuffer.ToString(0, _tokenSize);
                     CurrentState = State.Property;
                     _charPos++;
                     return true;
@@ -105,7 +107,7 @@ namespace Gameloop.Vdf
                     }
                     else if (_tokenSize != 0)
                     {
-                        Value = new string(_tokenBuffer, 0, _tokenSize);
+                        Value = _tokenBuffer.ToString(0, _tokenSize);
                         CurrentState = State.Property;
                         return true;
                     }
@@ -157,7 +159,7 @@ namespace Gameloop.Vdf
                 _isQuoted = false;
                 return true;
             }
-            
+
             return false;
         }
 
@@ -166,7 +168,7 @@ namespace Gameloop.Vdf
             while (EnsureBuffer())
                 if (_charBuffer[++_charPos] == '\n')
                     return true;
-            
+
             return false;
         }
 
