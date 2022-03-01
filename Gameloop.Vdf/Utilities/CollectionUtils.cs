@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -54,15 +54,16 @@ namespace Gameloop.Vdf.Utilities
                 initial.Add(value);
             }
         }
-        
+
         public static T[] ArrayEmpty<T>()
         {
-            T[] array = Enumerable.Empty<T>() as T[];
-            Debug.Assert(array != null);
+            return Array.Empty<T>();
+            //T[] array = Enumerable.Empty<T>() as T[];
+            //Debug.Assert(array != null);
             // Defensively guard against a version of Linq where Enumerable.Empty<T> doesn't
             // return an array, but throw in debug versions so a better strategy can be
             // used if that ever happens.
-            return array ?? new T[0];
+            //return array ?? new T[0];
         }
     }
 }
