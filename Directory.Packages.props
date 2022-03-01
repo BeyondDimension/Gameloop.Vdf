@@ -1,0 +1,6 @@
+<Project>
+	<ItemGroup>
+		<PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageVersion Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+	</ItemGroup>
+</Project>
