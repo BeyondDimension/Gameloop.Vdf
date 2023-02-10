@@ -1,26 +1,25 @@
-﻿namespace Gameloop.Vdf
+﻿namespace Gameloop.Vdf;
+
+public sealed class VdfSerializerSettings
 {
-    public class VdfSerializerSettings
+    public static VdfSerializerSettings Default => new();
+    public static VdfSerializerSettings Common => new()
     {
-        public static VdfSerializerSettings Default => new VdfSerializerSettings();
-        public static VdfSerializerSettings Common => new VdfSerializerSettings
-        {
-            UsesEscapeSequences = true,
-            UsesConditionals = true
-        };
+        UsesEscapeSequences = true,
+        UsesConditionals = true
+    };
 
-        /// <summary>
-        /// Determines whether the parser should translate escape sequences (/n, /t, etc.).
-        /// </summary>
-        public bool UsesEscapeSequences = false;
+    /// <summary>
+    /// Determines whether the parser should translate escape sequences (/n, /t, etc.).
+    /// </summary>
+    public bool UsesEscapeSequences = false;
 
-        /// <summary>
-        /// Determines whether the parser should evaluate conditional blocks ([$WINDOWS], etc.).
-        /// </summary>
-        public bool UsesConditionals = true;
+    /// <summary>
+    /// Determines whether the parser should evaluate conditional blocks ([$WINDOWS], etc.).
+    /// </summary>
+    public bool UsesConditionals = true;
 
-        // System information
-        public bool IsXBox360 = false, IsWin32 = true;
-        public bool IsWindows = true, IsOSX = false, IsLinux = false, IsPosix = false;
-    }
+    // System information
+    //public const bool IsXBox360 = false, IsWin32 = true;
+    //public const bool IsWindows = true, IsOSX = false, IsLinux = false, IsPosix = false;
 }

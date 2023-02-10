@@ -1,51 +1,48 @@
-﻿using System;
+﻿namespace Gameloop.Vdf;
 
-namespace Gameloop.Vdf
+public abstract class VdfReader : IDisposable
 {
-    public abstract class VdfReader : IDisposable
+    public VdfSerializerSettings Settings { get; }
+    public bool CloseInput { get; set; }
+    public string? Value { get; set; }
+
+    protected internal State CurrentState { get; protected set; }
+
+    protected VdfReader() : this(VdfSerializerSettings.Default) { }
+
+    protected VdfReader(VdfSerializerSettings settings)
     {
-        public VdfSerializerSettings Settings { get; }
-        public bool CloseInput { get; set; }
-        public string? Value { get; set; }
+        Settings = settings;
 
-        protected internal State CurrentState { get; protected set; }
+        CurrentState = State.Start;
+        Value = null;
+        CloseInput = true;
+    }
 
-        protected VdfReader() : this(VdfSerializerSettings.Default) { }
+    public abstract bool ReadToken();
 
-        protected VdfReader(VdfSerializerSettings settings)
-        {
-            Settings = settings;
+    void IDisposable.Dispose()
+    {
+        if (CurrentState == State.Closed)
+            return;
 
-            CurrentState = State.Start;
-            Value = null;
-            CloseInput = true;
-        }
+        Close();
+    }
 
-        public abstract bool ReadToken();
+    public virtual void Close()
+    {
+        CurrentState = State.Closed;
+        Value = null;
+    }
 
-        void IDisposable.Dispose()
-        {
-            if (CurrentState == State.Closed)
-                return;
-
-            Close();
-        }
-
-        public virtual void Close()
-        {
-            CurrentState = State.Closed;
-            Value = null;
-        }
-
-        protected internal enum State
-        {
-            Start,
-            Property,
-            Object,
-            Comment,
-            Conditional,
-            Finished,
-            Closed
-        }
+    protected internal enum State
+    {
+        Start,
+        Property,
+        Object,
+        Comment,
+        Conditional,
+        Finished,
+        Closed
     }
 }

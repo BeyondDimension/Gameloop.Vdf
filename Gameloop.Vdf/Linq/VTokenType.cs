@@ -1,11 +1,10 @@
-﻿namespace Gameloop.Vdf.Linq
+﻿namespace Gameloop.Vdf.Linq;
+
+public enum VTokenType
 {
-    public enum VTokenType
-    {
-        None,
-        Property,
-        Object,
-        Value,
-        Comment
-    }
+    None,
+    Property,
+    Object,
+    Value,
+    Comment
 }
