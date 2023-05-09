@@ -3,13 +3,10 @@
 public static class VdfStructure
 {
     // Format
+    public const char CarriageReturn = '\r', NewLine = '\n';
     public const char Quote = '"', Escape = '\\', Comment = '/', Assign = ' ', Indent = '\t';
-    public const char ConditionalStart = '[', ConditionalEnd = ']';
+    public const char ConditionalStart = '[', ConditionalEnd = ']', ConditionalConstant = '$', ConditionalNot = '!', ConditionalAnd = '&', ConditionalOr = '|';
     public const char ObjectStart = '{', ObjectEnd = '}';
-
-    // Conditionals
-    public const string ConditionalXbox360 = "$X360", ConditionalWin32 = "$WIN32";
-    public const string ConditionalWindows = "$WINDOWS", ConditionalOSX = "$OSX", ConditionalLinux = "$LINUX", ConditionalPosix = "$POSIX";
 
     // Escapes
     private const uint EscapeMapLength = 128;
@@ -37,7 +34,7 @@ public static class VdfStructure
         UnescapeMap = new char[EscapeMapLength];
 
         for (int index = 0; index < EscapeMapLength; index++)
-            EscapeMap[index] = UnescapeMap[index] = (char) index;
+            EscapeMap[index] = UnescapeMap[index] = (char)index;
 
         for (int index = 0; index < EscapeConversions.GetLength(0); index++)
         {

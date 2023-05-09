@@ -10,14 +10,14 @@ public class VdfTextReader : VdfReader
     private int _charPos, _charsLen, _tokenSize;
     private bool _isQuoted, _isComment, _isConditional;
 
-        public VdfTextReader(TextReader reader)
-            : this(reader, VdfSerializerSettings.Default) { }
+    public VdfTextReader(TextReader reader)
+        : this(reader, VdfSerializerSettings.Default) { }
 
-        public VdfTextReader(TextReader reader, VdfSerializerSettings settings)
-            : base(settings)
-        {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
+    public VdfTextReader(TextReader reader, VdfSerializerSettings settings)
+        : base(settings)
+    {
+        if (reader == null)
+            throw new ArgumentNullException(nameof(reader));
 
         _reader = reader;
         _charBuffer = new char[DefaultBufferSize];
@@ -46,28 +46,28 @@ public class VdfTextReader : VdfReader
 
             #region Comment
 
-                if (_isComment)
+            if (_isComment)
+            {
+                if (curChar == VdfStructure.CarriageReturn || curChar == VdfStructure.NewLine)
                 {
-                    if (curChar == VdfStructure.CarriageReturn || curChar == VdfStructure.NewLine)
-                    {
-                        _isComment = false;
-                        Value = new string(_tokenBuffer, 0, _tokenSize);
-                        CurrentState = State.Comment;
-                        return true;
-                    }
-                    else
-                    {
-                        _tokenBuffer[_tokenSize++] = curChar;
-                        _charPos++;
-                        continue;
-                    }
+                    _isComment = false;
+                    Value = _tokenBuffer.ToString(0, _tokenSize);
+                    CurrentState = State.Comment;
+                    return true;
                 }
-                else if (!_isQuoted && _tokenSize == 0 && curChar == VdfStructure.Comment && _charBuffer[_charPos + 1] == VdfStructure.Comment)
+                else
                 {
-                    _isComment = true;
-                    _charPos += 2;
+                    _tokenBuffer[_tokenSize++] = curChar;
+                    _charPos++;
                     continue;
                 }
+            }
+            else if (!_isQuoted && _tokenSize == 0 && curChar == VdfStructure.Comment && _charBuffer[_charPos + 1] == VdfStructure.Comment)
+            {
+                _isComment = true;
+                _charPos += 2;
+                continue;
+            }
 
             #endregion
 
@@ -121,36 +121,36 @@ public class VdfTextReader : VdfReader
 
             #endregion
 
-                #region Conditional start/end
+            #region Conditional start/end
 
-                if (_isConditional || (!_isQuoted && curChar == VdfStructure.ConditionalStart))
+            if (_isConditional || (!_isQuoted && curChar == VdfStructure.ConditionalStart))
+            {
+                if (_tokenSize > 0 && (curChar == VdfStructure.ConditionalOr || curChar == VdfStructure.ConditionalAnd || curChar == VdfStructure.ConditionalEnd))
                 {
-                    if (_tokenSize > 0 && (curChar == VdfStructure.ConditionalOr || curChar == VdfStructure.ConditionalAnd || curChar == VdfStructure.ConditionalEnd))
-                    {
-                        Value = new string(_tokenBuffer, 0, _tokenSize);
-                        CurrentState = State.Conditional;
-                        return true;
-                    }
-                    else if (curChar == VdfStructure.ConditionalOr || curChar == VdfStructure.ConditionalAnd)
-                    {
-                        Value = new string(_charBuffer, _charPos, 2);
-                        CurrentState = State.Conditional;
-                        _charPos += 2;
-                        return true;
-                    }
-                    else if (curChar == VdfStructure.ConditionalStart || curChar == VdfStructure.ConditionalEnd || curChar == VdfStructure.ConditionalNot)
-                    {
-                        Value = curChar.ToString();
-                        CurrentState = State.Conditional;
-                        _isConditional = (curChar != VdfStructure.ConditionalEnd);
-                        _charPos++;
-                        return true;
-                    }
+                    Value = _tokenBuffer.ToString(0, _tokenSize);
+                    CurrentState = State.Conditional;
+                    return true;
                 }
+                else if (curChar == VdfStructure.ConditionalOr || curChar == VdfStructure.ConditionalAnd)
+                {
+                    Value = new string(_charBuffer, _charPos, 2);
+                    CurrentState = State.Conditional;
+                    _charPos += 2;
+                    return true;
+                }
+                else if (curChar == VdfStructure.ConditionalStart || curChar == VdfStructure.ConditionalEnd || curChar == VdfStructure.ConditionalNot)
+                {
+                    Value = curChar.ToString();
+                    CurrentState = State.Conditional;
+                    _isConditional = (curChar != VdfStructure.ConditionalEnd);
+                    _charPos++;
+                    return true;
+                }
+            }
 
-                #endregion
+            #endregion
 
-                #region Long token
+            #region Long token
 
             _tokenBuffer[_tokenSize++] = curChar;
             _charPos++;
@@ -191,14 +191,14 @@ public class VdfTextReader : VdfReader
         return false;
     }
 
-        private bool SeekNewLine()
-        {
-            while (EnsureBuffer())
-                if (_charBuffer[++_charPos] == '\n')
-                    return true;
+    private bool SeekNewLine()
+    {
+        while (EnsureBuffer())
+            if (_charBuffer[++_charPos] == '\n')
+                return true;
 
-            return false;
-        }
+        return false;
+    }
 
     /// <summary>
     /// Refills the buffer if we're at the end.
