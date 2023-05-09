@@ -1,34 +1,32 @@
 ﻿using Gameloop.Vdf.Linq;
-using System;
-using System.Collections.Generic;
 
-namespace Gameloop.Vdf
+namespace Gameloop.Vdf;
+
+public abstract class VdfWriter : IDisposable
 {
-    public abstract class VdfWriter : IDisposable
+    public VdfSerializerSettings Settings { get; }
+    public bool CloseOutput { get; set; }
+    protected internal State CurrentState { get; protected set; }
+
+    protected VdfWriter() : this(VdfSerializerSettings.Default) { }
+
+    protected VdfWriter(VdfSerializerSettings settings)
     {
-        public VdfSerializerSettings Settings { get; }
-        public bool CloseOutput { get; set; }
-        protected internal State CurrentState { get; protected set; }
+        Settings = settings;
 
-        protected VdfWriter() : this(VdfSerializerSettings.Default) { }
+        CurrentState = State.Start;
+        CloseOutput = true;
+    }
 
-        protected VdfWriter(VdfSerializerSettings settings)
-        {
-            Settings = settings;
+    public abstract void WriteObjectStart();
 
-            CurrentState = State.Start;
-            CloseOutput = true;
-        }
+    public abstract void WriteObjectEnd();
 
-        public abstract void WriteObjectStart();
+    public abstract void WriteKey(string key);
 
-        public abstract void WriteObjectEnd();
+    public abstract void WriteValue(VValue value);
 
-        public abstract void WriteKey(string key);
-
-        public abstract void WriteValue(VValue value);
-
-        public abstract void WriteComment(string text);
+    public abstract void WriteComment(string text);
 
         public abstract void WriteConditional(IReadOnlyList<VConditional.Token> tokens);
 
@@ -37,13 +35,13 @@ namespace Gameloop.Vdf
             if (CurrentState == State.Closed)
                 return;
 
-            Close();
-        }
+        Close();
+    }
 
-        public virtual void Close()
-        {
-            CurrentState = State.Closed;
-        }
+    public virtual void Close()
+    {
+        CurrentState = State.Closed;
+    }
 
         protected internal enum State
         {

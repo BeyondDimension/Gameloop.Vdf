@@ -1,10 +1,7 @@
-﻿using System;
+﻿namespace Gameloop.Vdf;
 
-namespace Gameloop.Vdf
+public class VdfException : Exception
 {
-    public class VdfException : Exception
-    {
-        public VdfException(string message)
-            : base(message) { }
-    }
+    public VdfException(string message)
+        : base(message) { }
 }

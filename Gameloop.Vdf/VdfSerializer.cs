@@ -1,15 +1,12 @@
 ﻿using Gameloop.Vdf.Linq;
-using System;
-using System.IO;
 
-namespace Gameloop.Vdf
+namespace Gameloop.Vdf;
+
+public class VdfSerializer
 {
-    public class VdfSerializer
-    {
-        private readonly VdfSerializerSettings _settings;
+    private readonly VdfSerializerSettings _settings;
 
-        public VdfSerializer()
-            : this(VdfSerializerSettings.Default) { }
+    public VdfSerializer() : this(VdfSerializerSettings.Default) { }
 
         public VdfSerializer(VdfSerializerSettings settings)
         {
@@ -19,15 +16,15 @@ namespace Gameloop.Vdf
                 throw new Exception("DefinedConditionals must be set when UsesConditionals=true.");
         }
 
-        public void Serialize(TextWriter textWriter, VToken value)
-        {
-            using VdfWriter vdfWriter = new VdfTextWriter(textWriter, _settings);
-            value.WriteTo(vdfWriter);
-        }
+    public void Serialize(TextWriter textWriter, VToken value)
+    {
+        using VdfWriter vdfWriter = new VdfTextWriter(textWriter, _settings);
+        value.WriteTo(vdfWriter);
+    }
 
-        public VProperty Deserialize(TextReader textReader)
-        {
-            using VdfReader vdfReader = new VdfTextReader(textReader, _settings);
+    public VProperty Deserialize(TextReader textReader)
+    {
+        using VdfReader vdfReader = new VdfTextReader(textReader, _settings);
 
             if (!vdfReader.ReadToken())
                 throw new VdfException("Incomplete VDF data at beginning of file.");
@@ -37,13 +34,13 @@ namespace Gameloop.Vdf
                 if (!vdfReader.ReadToken())
                     throw new VdfException("Incomplete VDF data after root comment.");
 
-            return ReadProperty(vdfReader);
-        }
+        return ReadProperty(vdfReader);
+    }
 
-        private VProperty ReadProperty(VdfReader reader)
-        {
-            // Setting it to null is temporary, we'll set Value in just a second.
-            VProperty result = new VProperty(reader.Value, null!);
+    private VProperty ReadProperty(VdfReader reader)
+    {
+        // Setting it to null is temporary, we'll set Value in just a second.
+        VProperty result = new(reader.Value, null!);
 
             if (!reader.ReadToken())
                 throw new VdfException("Incomplete VDF data after property key.");
@@ -68,12 +65,12 @@ namespace Gameloop.Vdf
             else
                 throw new VdfException($"Unexpected state when deserializing property (key: {result.Key}, state: {reader.CurrentState}).");
 
-            return result;
-        }
+        return result;
+    }
 
-        private VObject ReadObject(VdfReader reader)
-        {
-            VObject result = new VObject();
+    private VObject ReadObject(VdfReader reader)
+    {
+        VObject result = new();
 
             if (!reader.ReadToken())
                 throw new VdfException("Incomplete VDF data after object start.");

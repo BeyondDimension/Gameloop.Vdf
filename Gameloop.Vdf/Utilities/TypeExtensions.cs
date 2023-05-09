@@ -23,80 +23,77 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
-namespace Gameloop.Vdf.Utilities
+namespace Gameloop.Vdf.Utilities;
+
+internal static class TypeExtensions
 {
-    internal static class TypeExtensions
-    {
 #if DOTNET || PORTABLE
 #if !DOTNET
-        private const BindingFlags DefaultFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
+    private const BindingFlags DefaultFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 #endif
 #endif
 
-    public static bool IsGenericType(this Type type)
+public static bool IsGenericType(this Type type)
+{
+#if HAVE_FULL_REFLECTION
+    return type.IsGenericType;
+#else
+    return type.GetTypeInfo().IsGenericType;
+#endif
+}
+
+#if (DOTNET || PORTABLE)
+    public static MethodInfo GetBaseDefinition(this MethodInfo method)
+    {
+        return method.GetRuntimeBaseDefinition();
+    }
+#endif
+
+#if (DOTNET || PORTABLE)
+#if !DOTNET
+    public static MethodInfo GetMethod(this Type type, string name)
+    {
+        return type.GetMethod(name, DefaultFlags);
+    }
+
+    public static MethodInfo GetMethod(this Type type, string name, BindingFlags bindingFlags)
+    {
+        return type.GetTypeInfo().GetDeclaredMethod(name);
+    }
+
+    public static IEnumerable<MethodInfo> GetMethods(this Type type, BindingFlags bindingFlags)
+    {
+        return type.GetTypeInfo().DeclaredMethods;
+    }
+#endif
+#endif
+
+    public static Type BaseType(this Type type)
     {
 #if HAVE_FULL_REFLECTION
-        return type.IsGenericType;
+        return type.BaseType;
 #else
-        return type.GetTypeInfo().IsGenericType;
+        return type.GetTypeInfo().BaseType;
 #endif
     }
 
-#if (DOTNET || PORTABLE)
-        public static MethodInfo GetBaseDefinition(this MethodInfo method)
-        {
-            return method.GetRuntimeBaseDefinition();
-        }
-#endif
-
-#if (DOTNET || PORTABLE)
-#if !DOTNET
-        public static MethodInfo GetMethod(this Type type, string name)
-        {
-            return type.GetMethod(name, DefaultFlags);
-        }
-
-        public static MethodInfo GetMethod(this Type type, string name, BindingFlags bindingFlags)
-        {
-            return type.GetTypeInfo().GetDeclaredMethod(name);
-        }
-
-        public static IEnumerable<MethodInfo> GetMethods(this Type type, BindingFlags bindingFlags)
-        {
-            return type.GetTypeInfo().DeclaredMethods;
-        }
-#endif
-#endif
-
-        public static Type BaseType(this Type type)
-        {
+    public static bool IsVisible(this Type type)
+    {
 #if HAVE_FULL_REFLECTION
-            return type.BaseType;
+        return type.IsVisible;
 #else
-            return type.GetTypeInfo().BaseType;
+        return type.GetTypeInfo().IsVisible;
 #endif
-        }
+    }
 
-        public static bool IsVisible(this Type type)
-        {
+    public static bool IsValueType(this Type type)
+    {
 #if HAVE_FULL_REFLECTION
-            return type.IsVisible;
+        return type.IsValueType;
 #else
-            return type.GetTypeInfo().IsVisible;
+        return type.GetTypeInfo().IsValueType;
 #endif
-        }
-
-        public static bool IsValueType(this Type type)
-        {
-#if HAVE_FULL_REFLECTION
-            return type.IsValueType;
-#else
-            return type.GetTypeInfo().IsValueType;
-#endif
-        }
     }
 }

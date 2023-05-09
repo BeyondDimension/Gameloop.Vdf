@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace Gameloop.Vdf.Utilities;
 
-namespace Gameloop.Vdf.Utilities
+internal static class ValidationUtils
 {
-    internal static class ValidationUtils
+    public static void ArgumentNotNull(object value, string parameterName)
     {
-        public static void ArgumentNotNull(object value, string parameterName)
-        {
-            if (value == null)
-                throw new ArgumentNullException(parameterName);
-        }
+        if (value == null)
+            throw new ArgumentNullException(parameterName);
     }
 }

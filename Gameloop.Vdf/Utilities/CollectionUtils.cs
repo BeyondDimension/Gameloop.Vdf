@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2007 James Newton-King
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,46 +23,42 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 
-namespace Gameloop.Vdf.Utilities
+namespace Gameloop.Vdf.Utilities;
+
+internal static class CollectionUtils
 {
-    internal static class CollectionUtils
+    /// <summary>
+    /// Adds the elements of the specified collection to the specified generic <see cref="IList{T}"/>.
+    /// </summary>
+    /// <param name="initial">The list to add to.</param>
+    /// <param name="collection">The collection of elements to add.</param>
+    public static void AddRange<T>(this IList<T> initial, IEnumerable<T> collection)
     {
-        /// <summary>
-        /// Adds the elements of the specified collection to the specified generic <see cref="IList{T}"/>.
-        /// </summary>
-        /// <param name="initial">The list to add to.</param>
-        /// <param name="collection">The collection of elements to add.</param>
-        public static void AddRange<T>(this IList<T> initial, IEnumerable<T> collection)
+        if (initial == null)
         {
-            if (initial == null)
-            {
-                throw new ArgumentNullException(nameof(initial));
-            }
-
-            if (collection == null)
-            {
-                return;
-            }
-
-            foreach (T value in collection)
-            {
-                initial.Add(value);
-            }
+            throw new ArgumentNullException(nameof(initial));
         }
-        
-        public static T[] ArrayEmpty<T>()
+
+        if (collection == null)
         {
-            T[] array = Enumerable.Empty<T>() as T[];
-            Debug.Assert(array != null);
-            // Defensively guard against a version of Linq where Enumerable.Empty<T> doesn't
-            // return an array, but throw in debug versions so a better strategy can be
-            // used if that ever happens.
-            return array ?? new T[0];
+            return;
         }
+
+        foreach (T value in collection)
+        {
+            initial.Add(value);
+        }
+    }
+
+    public static T[] ArrayEmpty<T>()
+    {
+        return Array.Empty<T>();
+        //T[] array = Enumerable.Empty<T>() as T[];
+        //Debug.Assert(array != null);
+        // Defensively guard against a version of Linq where Enumerable.Empty<T> doesn't
+        // return an array, but throw in debug versions so a better strategy can be
+        // used if that ever happens.
+        //return array ?? new T[0];
     }
 }
