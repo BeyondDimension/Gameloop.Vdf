@@ -28,12 +28,12 @@ public abstract class VdfWriter : IDisposable
 
     public abstract void WriteComment(string text);
 
-        public abstract void WriteConditional(IReadOnlyList<VConditional.Token> tokens);
+    public abstract void WriteConditional(IReadOnlyList<VConditional.Token> tokens);
 
-        void IDisposable.Dispose()
-        {
-            if (CurrentState == State.Closed)
-                return;
+    void IDisposable.Dispose()
+    {
+        if (CurrentState == State.Closed)
+            return;
 
         Close();
     }
@@ -43,17 +43,16 @@ public abstract class VdfWriter : IDisposable
         CurrentState = State.Closed;
     }
 
-        protected internal enum State
-        {
-            Start,
-            Key,
-            Value,
-            ObjectStart,
-            ObjectEnd,
-            Comment,
-            Conditional,
-            Finished,
-            Closed
-        }
+    protected internal enum State
+    {
+        Start,
+        Key,
+        Value,
+        ObjectStart,
+        ObjectEnd,
+        Comment,
+        Conditional,
+        Finished,
+        Closed
     }
 }
